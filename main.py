@@ -2,7 +2,6 @@ import pymysql
 import hashlib
 import os
 import time
-import getpass
 import platform 
 import pandas
 from tabulate import tabulate
