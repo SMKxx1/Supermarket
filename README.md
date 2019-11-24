@@ -84,9 +84,8 @@ This module is used to find out the operating system running the program.
 ```
 print(tabulate(cart, headers='keys', showindex=False, tablefmt='fancy_grid'))
 ```
-This module help Pretty-print tabular data in Python. It is not present in python by default but needs to be installed
-if python environment is setup on the computer then type `python -m pip install tabulate` in the windows terminal.
-Or else copy the tabulate file from the github repository and paste it in `C:\Users\admin\AppData\Local\Programs\Python\Python37\Lib`
+This module help Pretty-print tabular data in Python. It is not present in python by default but needs to be installed.
+__However i have just copied the module and pasted it into the repository so that you dont have to install it.__
 
 # Mysql
 ## __Products Table__
