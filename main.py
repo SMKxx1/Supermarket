@@ -115,44 +115,47 @@ def generate_receipt(cart):
     c.execute(command, paras)
     
 def view_history():
-    purchase = pandas.read_sql("SELECT * FROM purchase;", conn)
-    products = pandas.read_sql("SELECT * FROM products;",conn)
-    print(purchase.to_string(index=False))
-    purchase_id = int(input("Enter the purchase id: "))
-    dic1 = purchase.loc[purchase.purchase_id == purchase_id,]["item_qty"].to_dict()
-    for value in dic1.values():
-        dic1 = eval(value)
-    Item_name = []
-    for i in dic1.keys():
-        Item_name.append(str(i))
-    Quantity = []
-    for i in dic1.values():
-        Quantity.append(int(i))
-    price = []
-    price1 = []
-    for i in dic1.keys():
-        p = int(products.loc[products.item == i]["price"])
-        price1.append(p)
-    for i, z in enumerate(price1):
-        price.append(price1[i] * Quantity[i])
-    Tax = []
-    for i in price:
-        Tax.append(round((i/100)*18, 2))
-    FP = []
-    for z, i in enumerate(price):
-        FP.append(price[z]+Tax[z])
-    dic = {
-        'Item Name': Item_name,
-        'Quantity': Quantity,
-        'Price': price,
-        'Tax': Tax,
-        'Final Price': FP
-    }
-    receipt = pandas.DataFrame(data = dic, columns=['Item Name','Quantity','Price','Tax','Final Price'])
-    footer = {'Item Name': 'Total Price', 'Quantity': None, 'Price': sum(receipt['Price']), 'Tax': sum(receipt['Tax']), 'Final Price': sum(receipt['Final Price'])}
-    receipt = receipt.append(footer, ignore_index=True, sort=False)
-    print(tabulate(receipt, headers='keys',tablefmt="grid", showindex=False))
-    input()
+    try:
+        while True:
+            purchase = pandas.read_sql("SELECT * FROM purchase;", conn, index_col=None)
+            products = pandas.read_sql("SELECT * FROM products;",conn, index_col=None)
+            print(tabulate(purchase, headers="keys", showindex=False, tablefmt="grid"))
+            purchase_id = int(input("Enter the purchase id: "))
+            for i in purchase.loc[purchase.purchase_id == purchase_id, "item_qty"]:
+                dic1 = eval(i)
+            Item_name = []
+            Quantity = []
+            for x, y in zip(dic1.keys(), dic1.values()):
+                Item_name.append(x)
+                Quantity.append(y)
+            price = []
+            price1 = []
+            for i in Item_name:
+                p = int(products.loc[products.item == i]["price"])
+                price1.append(p)
+            for i, _ in enumerate(price1):
+                price.append(price1[i] * Quantity[i])
+            Tax = []
+            for i in price:
+                Tax.append(round((i/100)*18, 2))
+            FP = []
+            for z, i in enumerate(price):
+                FP.append(price[z]+Tax[z])
+            dic = {
+                'Item Name': Item_name,
+                'Quantity': Quantity,
+                'Price': price,
+                'Tax': Tax,
+                'Final Price': FP
+            }
+            receipt = pandas.DataFrame(data = dic, columns=['Item Name','Quantity','Price','Tax','Final Price'])
+            footer = {'Item Name': 'Total Price', 'Quantity': None, 'Price': sum(receipt['Price']), 'Tax': sum(receipt['Tax']), 'Final Price': sum(receipt['Final Price'])}
+            receipt = receipt.append(footer, ignore_index=True, sort=False)
+            print(tabulate(receipt, headers='keys',tablefmt="grid", showindex=False))
+            input()
+
+    except KeyboardInterrupt:
+        pass
 
 
 def main():
