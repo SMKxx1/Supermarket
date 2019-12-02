@@ -37,10 +37,16 @@ def create_receipt():
     item_no = 0
     try:
         while True:
-            print(tabulate(products, headers=['Item No','Name','Type','Quantity','Price'], showindex=False, tablefmt='psql'))
+            print(tabulate(products,
+                           headers=['Item No','Name','Type','Quantity','Price'],
+                           showindex=False,
+                           tablefmt='psql'))
             print()
             print("CART")
-            print(tabulate(cart, headers='keys', showindex=False, tablefmt='fancy_grid'))
+            print(tabulate(cart,
+                           headers='keys',
+                           showindex=False,
+                           tablefmt='fancy_grid'))
             item = int(input("Enter Item number: "))
             if item > 30:
                 print("Invalid Value")
@@ -69,7 +75,9 @@ def create_receipt():
                             'Type': products.loc[int(item) - 1]['type'],
                             'Quantity': qty,
                             'Price': (products.loc[int(item) - 1]['price']) * qty}
-                        cart = cart.append(dic, ignore_index=True, sort=False)
+                        cart = cart.append(dic,
+                                           ignore_index=True,
+                                           sort=False)
                         clear()
     except KeyboardInterrupt:
         loop = False
@@ -91,6 +99,7 @@ def generate_receipt(cart):
         item_qty[i] = x
     gst = lambda y: ((y/100) * 18)
     Tax = gst(cart['Price'])
+
     dic = {
         'Item No': cart['Item No'],
         'Item Name': cart['Name'],
@@ -100,11 +109,25 @@ def generate_receipt(cart):
         'Final Price': cart['Price'] + Tax
     }
     receipt = pandas.DataFrame(dic)
-    footer = {'Item No': None, 'Item Name': 'Total Price', 'Quantity': None, 'Price': sum(receipt['Price']), 'Tax': sum(receipt['Tax']), 'Final Price': sum(receipt['Final Price'])}
-    receipt = receipt.append(footer, ignore_index=True, sort=False)
+
+    footer = {
+        'Item No': None,
+        'Item Name': 'Total Price',
+        'Quantity': None,
+        'Price': sum(receipt['Price']),
+        'Tax': sum(receipt['Tax']),
+        'Final Price': sum(receipt['Final Price'])}
+
+    receipt = receipt.append(footer,
+                             ignore_index=True,
+                             sort=False)
     clear()
     print("RECEIPT")
-    print(tabulate(receipt, headers='keys', showindex=False, tablefmt='grid', numalign='right'))
+    print(tabulate(receipt,
+                   headers='keys',
+                   showindex=False,
+                   tablefmt='grid',
+                   numalign='right'))
     input()
     date = datetime.date.today()
     price = footer['Price']
@@ -117,9 +140,16 @@ def generate_receipt(cart):
 def view_history():
     try:
         while True:
-            purchase = pandas.read_sql("SELECT * FROM purchase;", conn, index_col=None)
-            products = pandas.read_sql("SELECT * FROM products;",conn, index_col=None)
-            print(tabulate(purchase, headers="keys", showindex=False, tablefmt="grid"))
+            purchase = pandas.read_sql("SELECT * FROM purchase;",
+                                       conn,
+                                       index_col=None)
+            products = pandas.read_sql("SELECT * FROM products;",
+                                       conn,
+                                       index_col=None)
+            print(tabulate(purchase,
+                           headers="keys",
+                           showindex=False,
+                           tablefmt="grid"))
             purchase_id = int(input("Enter the purchase id: "))
             for i in purchase.loc[purchase.purchase_id == purchase_id, "item_qty"]:
                 dic1 = eval(i)
@@ -148,10 +178,23 @@ def view_history():
                 'Tax': Tax,
                 'Final Price': FP
             }
-            receipt = pandas.DataFrame(data = dic, columns=['Item Name','Quantity','Price','Tax','Final Price'])
-            footer = {'Item Name': 'Total Price', 'Quantity': None, 'Price': sum(receipt['Price']), 'Tax': sum(receipt['Tax']), 'Final Price': sum(receipt['Final Price'])}
-            receipt = receipt.append(footer, ignore_index=True, sort=False)
-            print(tabulate(receipt, headers='keys',tablefmt="grid", showindex=False))
+            receipt = pandas.DataFrame(data = dic,
+                                       columns=['Item Name','Quantity','Price','Tax','Final Price'])
+
+            footer = {
+                'Item Name': 'Total Price',
+                'Quantity': None,
+                'Price': sum(receipt['Price']),
+                'Tax': sum(receipt['Tax']),
+                'Final Price': sum(receipt['Final Price'])}
+
+            receipt = receipt.append(footer,
+                                     ignore_index=True,
+                                     sort=False)
+            print(tabulate(receipt,
+                           headers='keys',
+                           tablefmt="grid",
+                           showindex=False))
             input()
 
     except KeyboardInterrupt:
