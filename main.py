@@ -1,7 +1,5 @@
 import pymysql
-import hashlib
 import os
-import time
 import platform 
 import pandas
 from tabulate import tabulate
