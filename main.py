@@ -1,5 +1,7 @@
 import pymysql
+import hashlib
 import os
+import time
 import platform 
 import pandas
 from tabulate import tabulate
@@ -13,6 +15,7 @@ def clear():
 
 conn = pymysql.connect(
     host = "localhost",
+    port = 3306,
     user = "root",
     passwd = "1234",
     database = "store"
@@ -133,6 +136,7 @@ def generate_receipt(cart):
     command = f"INSERT INTO purchase values (NULL, %s, %s, %s, %s, %s)"
     paras = (date, str(item_qty), price, tax, TP)
     c.execute(command, paras)
+    conn.commit()
     
 def view_history():
     try:
@@ -188,11 +192,19 @@ def view_history():
             receipt = receipt.append(footer,
                                      ignore_index=True,
                                      sort=False)
+
             print(tabulate(receipt,
                            headers='keys',
                            tablefmt="grid",
                            showindex=False))
-            input()
+
+            graph = input("See graph?? [y/n] ")
+
+            if graph.lower() == 'y':
+                import matplotlib.pyplot as plt
+                plt.pie(receipt['Price'][:-1], labels= receipt['Item Name'][:-1], autopct='%.2f%%',shadow=True)
+                plt.title("Purchases")
+                plt.show()
 
     except KeyboardInterrupt:
         pass
@@ -220,5 +232,4 @@ def main():
         exit()
 
 main()
-conn.commit()
 conn.close()
