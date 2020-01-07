@@ -1,7 +1,5 @@
 import pymysql
-import hashlib
 import os
-import time
 import platform 
 import pandas
 from tabulate import tabulate
@@ -15,7 +13,6 @@ def clear():
 
 conn = pymysql.connect(
     host = "localhost",
-    port = 3306,
     user = "root",
     passwd = "1234",
     database = "store"
